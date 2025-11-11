@@ -11,20 +11,13 @@ from fastapi import UploadFile
 
 from rock import env_vars
 from rock.actions import (
-    BashAction,
-    BashInterruptAction,
     BashObservation,
-    CloseBashSessionRequest,
     CloseBashSessionResponse,
-    Command,
     CommandResponse,
     CreateBashSessionResponse,
-    CreateSessionRequest,
     IsAliveResponse,
-    ReadFileRequest,
     ReadFileResponse,
     UploadResponse,
-    WriteFileRequest,
     WriteFileResponse,
 )
 from rock.admin.core.redis_key import alive_sandbox_key, timeout_sandbox_key
@@ -34,6 +27,13 @@ from rock.config import OssConfig, RockConfig
 from rock.deployments.constants import Port
 from rock.deployments.status import ServiceStatus
 from rock.logger import init_logger
+from rock.rocklet.proto.request import BashInterruptAction
+from rock.rocklet.proto.request import InternalBashAction as BashAction
+from rock.rocklet.proto.request import InternalCloseBashSessionRequest as CloseBashSessionRequest
+from rock.rocklet.proto.request import InternalCommand as Command
+from rock.rocklet.proto.request import InternalCreateSessionRequest as CreateSessionRequest
+from rock.rocklet.proto.request import InternalReadFileRequest as ReadFileRequest
+from rock.rocklet.proto.request import InternalWriteFileRequest as WriteFileRequest
 from rock.utils.providers import RedisProvider
 
 logger = init_logger(__name__)
@@ -84,7 +84,7 @@ class SandboxReadService:
         return CloseBashSessionResponse(**response)
 
     @monitor_sandbox_operation()
-    async def is_alive(self, sandbox_id) -> IsAliveResponse:
+    async def is_alive(self, sandbox_id: str) -> IsAliveResponse:
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
         response = await self._send_request(sandbox_id, sandbox_status_dicts[0], "is_alive", None, None, None, "GET")
         return IsAliveResponse(**response)
@@ -230,7 +230,7 @@ class SandboxReadService:
         #     return "ws://127.0.0.1:8090/acp"
         # if sandbox_id == "local":   # Local debugging for general ws service
         #     return "ws://127.0.0.1:8090/ws"
-        # Get sandbox internal address based on sandbox_id
+        # Get sandbox  address based on sandbox_id
         status_dicts = await self.get_service_status(sandbox_id)
         host_ip = status_dicts[0].get("host_ip")
         service_status = ServiceStatus.from_dict(status_dicts[0])

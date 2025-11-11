@@ -6,19 +6,12 @@ from fastapi import UploadFile
 
 from rock import env_vars
 from rock.actions import (
-    BashAction,
-    BashInterruptAction,
     BashObservation,
-    CloseBashSessionRequest,
     CloseBashSessionResponse,
-    Command,
     CommandResponse,
     CreateBashSessionResponse,
-    CreateSessionRequest,
-    ReadFileRequest,
     ReadFileResponse,
     UploadResponse,
-    WriteFileRequest,
     WriteFileResponse,
 )
 from rock.admin.core.redis_key import ALIVE_PREFIX, alive_sandbox_key, timeout_sandbox_key
@@ -30,6 +23,13 @@ from rock.deployments.constants import Status
 from rock.deployments.status import PhaseStatus, ServiceStatus
 from rock.logger import init_logger
 from rock.rocklet import __version__ as swe_version
+from rock.rocklet.proto.request import BashInterruptAction
+from rock.rocklet.proto.request import InternalBashAction as BashAction
+from rock.rocklet.proto.request import InternalCloseBashSessionRequest as CloseBashSessionRequest
+from rock.rocklet.proto.request import InternalCommand as Command
+from rock.rocklet.proto.request import InternalCreateSessionRequest as CreateSessionRequest
+from rock.rocklet.proto.request import InternalReadFileRequest as ReadFileRequest
+from rock.rocklet.proto.request import InternalWriteFileRequest as WriteFileRequest
 from rock.sandbox import __version__ as gateway_version
 from rock.sandbox.base_manager import BaseManager
 from rock.sandbox.sandbox_actor import SandboxActor
