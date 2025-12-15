@@ -2,12 +2,13 @@ import logging
 import subprocess
 
 from rock.sdk.builder.base import EnvBuilder
-from rock.utils.docker import ImageUtil
+from rock.utils import ImageUtil, retry_async
 
 logger = logging.getLogger(__name__)
 
 
 class ImageMirror(EnvBuilder):
+    @retry_async(max_attempts=3)
     async def build(
         self,
         instance_record: dict[str, str] | None = None,
