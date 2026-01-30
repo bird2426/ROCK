@@ -6,9 +6,11 @@ from fastapi.responses import JSONResponse
 
 from rock.logger import init_logger
 from rock.sdk.model.server.config import ModelServiceConfig
+from rock.sdk.model.server.utils import record_traj
 from rock.utils import retry_async
 
 logger = init_logger(__name__)
+
 
 proxy_router = APIRouter()
 
@@ -64,6 +66,7 @@ def get_base_url(model_name: str, config: ModelServiceConfig) -> str:
 
 
 @proxy_router.post("/v1/chat/completions")
+@record_traj
 async def chat_completions(body: dict[str, Any], request: Request):
     """
     OpenAI-compatible chat completions proxy endpoint.
